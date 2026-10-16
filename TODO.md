@@ -41,3 +41,9 @@
 ## Image upload validation repair
 
 - [x] Accept trusted `/manus-storage/...` paths returned by the project uploader in listing image payloads while continuing to validate absolute HTTP(S) image URLs and reject malformed URLs.
+
+## Seller form clarity and error repair
+
+- [x] Explain required versus optional seller fields directly in the listing form.
+- [x] Enforce the database-safe maximum price before submission and require a photo before saving or sending for review.
+- [x] Convert validation and database failures into clear seller guidance instead of exposing raw Zod or SQL text.
