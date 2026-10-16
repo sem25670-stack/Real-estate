@@ -8,5 +8,17 @@
   - Acceptance: navigation collapses on mobile, content grids adapt across breakpoints, and forms remain usable on narrow screens.
 - [x] Recreate interactive homepage elements and hover states.
   - Acceptance: search submission scrolls to listings, filters can open, listing save buttons toggle, mortgage values recalculate, inquiry and subscription actions provide feedback, and navigation buttons scroll to relevant sections.
-- [ ] Save a checkpoint and publish the verified build.
+- [x] Customers can search and filter properties by location, listing status, property type, and price range.
+  - Acceptance: the hero search and detailed filter panel update the visible listings, show match counts, support reset, and show a helpful empty state when nothing matches.
+- [x] Customers can view property photos and details.
+  - Acceptance: listing cards expose photo counts and a detail modal with a gallery, price, location, metadata, description, seller information, favourites, WhatsApp contact, viewing request, and report actions.
+- [x] Customers can contact sellers through WhatsApp.
+  - Acceptance: every listing and its detail modal include a pre-filled WhatsApp deep link addressed to the seller.
+- [x] Customers can save favourites.
+  - Acceptance: saved listings persist in localStorage, show a count in the header, and can be viewed through a favourites-only listing state.
+- [x] Customers can request viewings.
+  - Acceptance: a viewing modal captures name, phone, date, preferred time, and message, then confirms submission feedback.
+- [x] Customers can report suspicious listings.
+  - Acceptance: the detail modal exposes a safety report flow with reason, details, good-faith confirmation, and submission feedback.
+- [x] Save a checkpoint and publish the verified build.
   - Acceptance: the project is committed to the canonical main branch and a successful publication URL is available.
