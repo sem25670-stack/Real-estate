@@ -37,3 +37,7 @@
 - [x] Make a new seller listing submission atomic: the primary create-and-submit action creates the listing directly in `pending_review`, confirms receipt to the seller, and prevents an intermediate draft-to-submit failure.
 - [x] Notify every authorized administrator when a new or resubmitted listing enters the review queue; keep the listing visible in Admin → Listing review.
 - [x] Show sellers their signed-in identity in the seller portal and replace the public Sign In control with a clear Signed in state plus account shortcut and sign-out action.
+
+## Image upload validation repair
+
+- [x] Accept trusted `/manus-storage/...` paths returned by the project uploader in listing image payloads while continuing to validate absolute HTTP(S) image URLs and reject malformed URLs.

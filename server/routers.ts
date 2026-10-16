@@ -12,7 +12,8 @@ import { adminRouter } from "./adminRouter";
 
 const propertyType = z.enum(["house", "apartment", "land", "commercial"]);
 const listingStatus = z.enum(["draft", "pending_review", "published", "rejected", "paused", "reserved", "sold", "rented", "expired"]);
-const imageInput = z.object({ storageKey: z.string().min(1).max(500), url: z.string().url().max(500), altText: z.string().max(240).optional(), sortOrder: z.number().int().min(0).max(100).default(0) });
+const imageUrl = z.string().max(500).refine((value) => value.startsWith("/manus-storage/") || (() => { try { const parsed = new URL(value); return parsed.protocol === "http:" || parsed.protocol === "https:"; } catch { return false; } })(), { message: "Invalid image URL" });
+const imageInput = z.object({ storageKey: z.string().min(1).max(500), url: imageUrl, altText: z.string().max(240).optional(), sortOrder: z.number().int().min(0).max(100).default(0) });
 const listingInput = z.object({ title: z.string().trim().min(5).max(180), propertyType, description: z.string().trim().min(30).max(10000), price: z.string().regex(/^\d+(\.\d{1,2})?$/), pricePeriod: z.enum(["total", "monthly", "yearly"]), location: z.string().trim().min(2).max(180), city: z.string().trim().min(2).max(100), bedrooms: z.number().int().min(0).max(50), bathrooms: z.number().int().min(0).max(50), areaSqft: z.number().int().min(0).max(100000000).nullable(), amenities: z.array(z.string().trim().min(1).max(80)).max(30), specifications: z.record(z.string().max(120), z.string().max(500)).default({}), availability: z.enum(["available", "unavailable", "move_in_soon"]), availableFrom: z.coerce.date().nullable(), expiresAt: z.coerce.date().nullable(), images: z.array(imageInput).min(1).max(20) });
 
 function parseJson<T>(value: string | null | undefined, fallback: T): T { if (!value) return fallback; try { return JSON.parse(value) as T; } catch { return fallback; } }
