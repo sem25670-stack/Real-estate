@@ -97,6 +97,7 @@ function whatsappUrl(property: Property) {
 export default function Home() {
   const publishedListings = trpc.marketplace.published.useQuery();
   const me = trpc.auth.me.useQuery();
+  const logout = trpc.auth.logout.useMutation({ onSuccess: () => { window.location.reload(); } });
   const openConversation = trpc.chat.openConversation.useMutation();
   const submitInquiryMutation = trpc.marketplace.submitInquiry.useMutation();
   const requestViewingMutation = trpc.marketplace.requestViewing.useMutation();
@@ -216,7 +217,7 @@ export default function Home() {
         <div className="container header-inner">
           <button className="brand" onClick={() => scrollToId("top")} aria-label="A&O Real Estate Solutions home"><img src={logo} alt="A&O Real Estate Solutions" /><span className="brand-copy"><strong>A&O</strong><small>REAL ESTATE SOLUTIONS</small><em>Building Dreams, Finding Homes</em></span></button>
           <nav className={menuOpen ? "main-nav is-open" : "main-nav"}>{["Home", "Buy", "Rent", "Land", "Commercial", "List a Property", "About Us", "Contact"].map((item) => <button key={item} onClick={() => { setMenuOpen(false); scrollToId(item === "Home" ? "top" : item === "List a Property" ? "owners" : item === "Contact" ? "footer" : "listings"); }}>{item}</button>)}</nav>
-          <div className="header-actions"><button className={showSavedOnly ? "saved-nav active" : "saved-nav"} onClick={() => { setShowSavedOnly(true); scrollToId("listings"); }}><Star size={15} fill={saved.length ? "currentColor" : "none"} /> Saved <span>{saved.length}</span></button><button className="icon-btn" aria-label="Search" onClick={() => scrollToId("search")}><Search size={17} /></button><button className="signin" onClick={() => startLogin()}><UserRound size={15} /> Sign In</button><button className="gold-btn small" onClick={() => window.location.assign("/seller")}>Seller portal</button></div>
+          <div className="header-actions"><button className={showSavedOnly ? "saved-nav active" : "saved-nav"} onClick={() => { setShowSavedOnly(true); scrollToId("listings"); }}><Star size={15} fill={saved.length ? "currentColor" : "none"} /> Saved <span>{saved.length}</span></button><button className="icon-btn" aria-label="Search" onClick={() => scrollToId("search")}><Search size={17} /></button>{me.data ? <button className="signin signed-in" onClick={() => window.location.assign("/seller")} title={`Signed in as ${me.data.name || me.data.email || "your account"}`}><UserRound size={15} /> Signed in</button> : <button className="signin" onClick={() => startLogin()}><UserRound size={15} /> Sign In</button>}<button className="gold-btn small" onClick={() => window.location.assign("/seller")}>Seller portal</button>{me.data && <button className="signout-link" onClick={() => logout.mutate()} disabled={logout.isPending}>Sign out</button>}</div>
           <button className="mobile-menu" onClick={() => setMenuOpen((v) => !v)} aria-label="Toggle menu">{menuOpen ? <X /> : <Menu />}</button>
         </div>
       </header>

@@ -110,6 +110,12 @@ export async function createNotification(userId: number, title: string, body: st
   await db.insert(notifications).values({ userId, title, body, kind });
 }
 
+export async function notifyAdmins(title: string, body: string, kind: string) {
+  const db = await getDb(); if (!db) return;
+  const admins = await db.select({ id: users.id }).from(users).where(eq(users.role, "admin"));
+  if (admins.length) await db.insert(notifications).values(admins.map((admin) => ({ userId: admin.id, title, body, kind })));
+}
+
 export async function getNotifications(userId: number) {
   const db = await getDb(); if (!db) return [];
   return db.select().from(notifications).where(eq(notifications.userId, userId)).orderBy(desc(notifications.createdAt)).limit(30);

@@ -31,3 +31,9 @@
 
 - [x] Apply the additive managed-database migration for conversations, messages, verification checks/documents, moderation state, duplicate flags, payments, categories, locations, and audit logs.
 - [x] Validate TypeScript, production build, existing authentication/platform tests, managed-table access, health endpoint, route manifest, and unauthenticated/protected API behavior.
+
+## Seller submission repair
+
+- [x] Make a new seller listing submission atomic: the primary create-and-submit action creates the listing directly in `pending_review`, confirms receipt to the seller, and prevents an intermediate draft-to-submit failure.
+- [x] Notify every authorized administrator when a new or resubmitted listing enters the review queue; keep the listing visible in Admin → Listing review.
+- [x] Show sellers their signed-in identity in the seller portal and replace the public Sign In control with a clear Signed in state plus account shortcut and sign-out action.
