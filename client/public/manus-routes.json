@@ -1,1 +1,1 @@
-{"routes":[{"path":"/","title":"A&O Realty marketplace"},{"path":"/seller","title":"Seller dashboard"},{"path":"/seller/:section","title":"Seller dashboard section"}]}
+{"routes":[{"path":"/","title":"A&O Realty marketplace"},{"path":"/seller","title":"Seller dashboard"},{"path":"/seller/:section","title":"Seller dashboard section"},{"path":"/messages","title":"A&O messages"},{"path":"/admin","title":"A&O administration"}]}

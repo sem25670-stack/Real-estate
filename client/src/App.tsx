@@ -6,6 +6,8 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import SellerDashboard from "./pages/SellerDashboard";
+import MessagesPanel from "./components/MessagesPanel";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -14,6 +16,8 @@ function Router() {
       <Route path={"/"} component={Home} />
       <Route path={"/seller"} component={SellerDashboard} />
       <Route path={"/seller/:section"} component={SellerDashboard} />
+      <Route path={"/messages"} component={MessagesPanel} />
+      <Route path={"/admin"} component={AdminDashboard} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

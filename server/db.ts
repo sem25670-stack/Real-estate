@@ -1,7 +1,7 @@
 import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { ENV } from './_core/env';
-import { agencies, agencyMembers, favourites, inquiries, listingImages, listingMetrics, listingReports, listings, notifications, sellerProfiles, sellerSubscriptions, users, viewingAppointments, type InsertUser } from "../drizzle/schema";
+import { agencies, agencyMembers, favourites, inquiries, listingImages, listingMetrics, listingReports, listings, notifications, sellerProfiles, sellerSubscriptions, users, verificationChecks, viewingAppointments, type InsertUser } from "../drizzle/schema";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
@@ -79,7 +79,9 @@ export async function getPublicListings() {
   const published = await db.select().from(listings).where(eq(listings.status, "published")).orderBy(desc(listings.featured), desc(listings.updatedAt));
   if (!published.length) return [];
   const images = await db.select().from(listingImages).where(inArray(listingImages.listingId, published.map((item) => item.id))).orderBy(asc(listingImages.sortOrder));
-  return published.map((listing) => ({ ...listing, images: images.filter((image) => image.listingId === listing.id) }));
+  const ownerIds = Array.from(new Set(published.map((listing) => listing.ownerUserId)));
+  const checks = ownerIds.length ? await db.select().from(verificationChecks).where(inArray(verificationChecks.userId, ownerIds)) : [];
+  return published.map((listing) => { const check = checks.find((item) => item.userId === listing.ownerUserId); return { ...listing, images: images.filter((image) => image.listingId === listing.id), verification: { identityVerified: check?.identityStatus === "completed", sellerAuthorizationReviewed: check?.authorizationStatus === "completed", propertyDocumentationReviewed: check?.propertyDocsStatus === "completed", legalChecksCompleted: check?.legalChecksStatus === "completed" } }; });
 }
 
 type ListingImageInput = Omit<typeof listingImages.$inferInsert, "listingId">;

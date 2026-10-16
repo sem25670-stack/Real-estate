@@ -70,6 +70,10 @@ export const listings = mysqlTable("listings", {
   rejectionReason: text("rejectionReason"),
   expiresAt: timestamp("expiresAt"),
   featured: boolean("featured").default(false).notNull(),
+  propertyDocsStatus: mysqlEnum("propertyDocsStatus", ["not_submitted", "submitted", "reviewed", "rejected"]).default("not_submitted").notNull(),
+  legalChecksStatus: mysqlEnum("legalChecksStatus", ["not_applicable", "not_started", "in_review", "completed", "rejected"]).default("not_started").notNull(),
+  duplicateFlag: boolean("duplicateFlag").default(false).notNull(),
+  duplicateOfListingId: int("duplicateOfListingId"),
   publishedAt: timestamp("publishedAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -165,6 +169,100 @@ export const sellerSubscriptions = mysqlTable("seller_subscriptions", {
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 
+export const verificationChecks = mysqlTable("verification_checks", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().unique(),
+  identityStatus: mysqlEnum("identityStatus", ["not_started", "submitted", "in_review", "completed", "rejected"]).default("not_started").notNull(),
+  authorizationStatus: mysqlEnum("authorizationStatus", ["not_started", "submitted", "in_review", "completed", "rejected"]).default("not_started").notNull(),
+  propertyDocsStatus: mysqlEnum("propertyDocsStatus", ["not_started", "in_review", "completed", "rejected"]).default("not_started").notNull(),
+  legalChecksStatus: mysqlEnum("legalChecksStatus", ["not_applicable", "not_started", "in_review", "completed", "rejected"]).default("not_started").notNull(),
+  notes: text("notes"),
+  reviewedByUserId: int("reviewedByUserId"),
+  reviewedAt: timestamp("reviewedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export const verificationDocuments = mysqlTable("verification_documents", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  listingId: int("listingId"),
+  docType: mysqlEnum("docType", ["identity", "seller_authorization", "ownership_evidence", "title_search", "tenure", "survey", "plot_dimensions", "boundary_document", "legal_check"]).notNull(),
+  fileName: varchar("fileName", { length: 240 }).notNull(),
+  contentType: varchar("contentType", { length: 120 }).notNull(),
+  byteSize: int("byteSize").notNull(),
+  storageKey: varchar("storageKey", { length: 500 }).notNull(),
+  status: mysqlEnum("status", ["uploaded", "in_review", "approved", "rejected"]).default("uploaded").notNull(),
+  rejectionReason: text("rejectionReason"),
+  reviewedByUserId: int("reviewedByUserId"),
+  reviewedAt: timestamp("reviewedAt"),
+  retentionUntil: timestamp("retentionUntil"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({ userIdx: index("verification_documents_user_idx").on(table.userId), listingIdx: index("verification_documents_listing_idx").on(table.listingId), statusIdx: index("verification_documents_status_idx").on(table.status) }));
+
+export const conversations = mysqlTable("conversations", {
+  id: int("id").autoincrement().primaryKey(),
+  listingId: int("listingId").notNull(),
+  buyerUserId: int("buyerUserId").notNull(),
+  sellerUserId: int("sellerUserId").notNull(),
+  status: mysqlEnum("status", ["open", "archived", "blocked"]).default("open").notNull(),
+  lastMessageAt: timestamp("lastMessageAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({ participantsIdx: index("conversations_participants_idx").on(table.buyerUserId, table.sellerUserId), listingIdx: index("conversations_listing_idx").on(table.listingId), uniqueThread: uniqueIndex("conversations_listing_buyer_unique").on(table.listingId, table.buyerUserId) }));
+
+export const messages = mysqlTable("messages", {
+  id: int("id").autoincrement().primaryKey(),
+  conversationId: int("conversationId").notNull(),
+  senderUserId: int("senderUserId").notNull(),
+  body: text("body").notNull(),
+  readAt: timestamp("readAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({ conversationIdx: index("messages_conversation_idx").on(table.conversationId), senderIdx: index("messages_sender_idx").on(table.senderUserId) }));
+
+export const subscriptionPayments = mysqlTable("subscription_payments", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  agencyId: int("agencyId"),
+  subscriptionId: int("subscriptionId"),
+  amount: decimal("amount", { precision: 15, scale: 2 }).notNull(),
+  currency: varchar("currency", { length: 8 }).default("UGX").notNull(),
+  status: mysqlEnum("status", ["pending", "paid", "failed", "refunded"]).default("pending").notNull(),
+  providerReference: varchar("providerReference", { length: 180 }),
+  paidAt: timestamp("paidAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const adminAuditLogs = mysqlTable("admin_audit_logs", {
+  id: int("id").autoincrement().primaryKey(),
+  adminUserId: int("adminUserId").notNull(),
+  action: varchar("action", { length: 120 }).notNull(),
+  entityType: varchar("entityType", { length: 80 }).notNull(),
+  entityId: int("entityId"),
+  detailsJson: text("detailsJson"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({ adminIdx: index("admin_audit_admin_idx").on(table.adminUserId), entityIdx: index("admin_audit_entity_idx").on(table.entityType, table.entityId) }));
+
+export const propertyCategories = mysqlTable("property_categories", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 120 }).notNull().unique(),
+  slug: varchar("slug", { length: 140 }).notNull().unique(),
+  description: text("description"),
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export const managedLocations = mysqlTable("managed_locations", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 140 }).notNull().unique(),
+  district: varchar("district", { length: 120 }),
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 export type SellerProfile = typeof sellerProfiles.$inferSelect;
@@ -172,3 +270,6 @@ export type Listing = typeof listings.$inferSelect;
 export type ListingImage = typeof listingImages.$inferSelect;
 export type Inquiry = typeof inquiries.$inferSelect;
 export type ViewingAppointment = typeof viewingAppointments.$inferSelect;
+export type Conversation = typeof conversations.$inferSelect;
+export type Message = typeof messages.$inferSelect;
+export type VerificationDocument = typeof verificationDocuments.$inferSelect;
