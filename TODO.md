@@ -1,24 +1,15 @@
 # A&O Realty implementation outcomes
 
-- [x] Recreate the A&O Realty homepage from the provided reference website with the same main sections: hero, property search, category cards, premium listings, mortgage calculator, inquiry form, locations, trust section, owner CTA, and footer.
-  - Acceptance: the page preserves the reference’s visual hierarchy, section order, copy direction, and responsive layout.
-- [x] Integrate the provided AandO.jpeg asset as the site brand/logo in the header and footer.
-  - Acceptance: the supplied A&O branding image is used in both brand treatments.
-- [x] Implement responsive desktop and mobile presentation.
-  - Acceptance: navigation collapses on mobile, content grids adapt across breakpoints, and forms remain usable on narrow screens.
-- [x] Recreate interactive homepage elements and hover states.
-  - Acceptance: search submission scrolls to listings, filters can open, listing save buttons toggle, mortgage values recalculate, inquiry and subscription actions provide feedback, and navigation buttons scroll to relevant sections.
-- [x] Customers can search and filter properties by location, listing status, property type, and price range.
-  - Acceptance: the hero search and detailed filter panel update the visible listings, show match counts, support reset, and show a helpful empty state when nothing matches.
-- [x] Customers can view property photos and details.
-  - Acceptance: listing cards expose photo counts and a detail modal with a gallery, price, location, metadata, description, seller information, favourites, WhatsApp contact, viewing request, and report actions.
-- [x] Customers can contact sellers through WhatsApp.
-  - Acceptance: every listing and its detail modal include a pre-filled WhatsApp deep link addressed to the seller.
-- [x] Customers can save favourites.
-  - Acceptance: saved listings persist in localStorage, show a count in the header, and can be viewed through a favourites-only listing state.
-- [x] Customers can request viewings.
-  - Acceptance: a viewing modal captures name, phone, date, preferred time, and message, then confirms submission feedback.
-- [x] Customers can report suspicious listings.
-  - Acceptance: the detail modal exposes a safety report flow with reason, details, good-faith confirmation, and submission feedback.
-- [x] Save a checkpoint and publish the verified build.
-  - Acceptance: the project is committed to the canonical main branch and a successful publication URL is available.
+- [x] Recreate the A&O Realty homepage from the provided reference website with responsive marketplace presentation.
+- [x] Implement public property search, detailed filtering, photo galleries, WhatsApp seller contact, favourites, viewing requests, and suspicious-listing reports.
+- [x] Enable and verify Manus OAuth sign-in with a protected seller workspace.
+  - Acceptance: logged-out customers can start Manus sign-in; authenticated users can access seller tools and users cannot access another seller’s data.
+- [x] Persist seller and agency accounts, listings, media metadata, listing states, availability, verification, inquiries, viewings, reports, notifications, analytics counters, and subscription/featured-listing records in the managed database.
+  - Acceptance: schema migration applies cleanly and the app reads/writes these records through protected server procedures.
+- [x] Build seller/agent/agency dashboard workflows.
+  - Acceptance: sellers can manage profile, create/edit listings, upload multi-image metadata, save drafts, submit for review, change availability/state, renew listings, submit verification, manage leads/viewings, view analytics, configure featured/subscription options, notifications, and account settings.
+- [x] Add agency membership and permission boundaries.
+  - Acceptance: authorized agency owners can create an agency workspace and manage agency-scoped records without exposing another seller’s records.
+- [x] Connect the public marketplace to published database listings and persist customer inquiries/viewing requests.
+- [x] Save a checkpoint and publish the verified full-stack build.
+  - Acceptance: the project is committed to canonical main and a successful published URL is available.
