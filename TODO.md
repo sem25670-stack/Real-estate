@@ -47,3 +47,9 @@
 - [x] Explain required versus optional seller fields directly in the listing form.
 - [x] Enforce the database-safe maximum price before submission and require a photo before saving or sending for review.
 - [x] Convert validation and database failures into clear seller guidance instead of exposing raw Zod or SQL text.
+
+## Image delivery repair
+
+- [x] Stream public storage assets inline with MIME and `Content-Disposition: inline` headers so browsers render listing photos instead of downloading them.
+- [x] Sanitize new seller image filenames before storage and provide a clear one-time re-upload instruction for legacy filenames that cannot be fetched.
+- [x] Add a safe marketplace fallback image when an older unavailable asset fails to load.

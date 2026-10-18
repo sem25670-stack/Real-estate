@@ -38,8 +38,21 @@ export function registerStorageProxy(app: Express) {
         return;
       }
 
-      res.set("Cache-Control", "no-store");
-      res.redirect(307, url);
+      // Stream the asset through the app so browsers render it inline. A raw
+      // redirect can inherit an attachment disposition from object storage and
+      // makes filenames containing spaces fragile in signed CloudFront URLs.
+      const assetResp = await fetch(encodeURI(url));
+      if (!assetResp.ok) {
+        console.error(`[StorageProxy] asset fetch failed: ${assetResp.status}`);
+        res.status(502).send("Stored image unavailable");
+        return;
+      }
+      const contentType = assetResp.headers.get("content-type") || "application/octet-stream";
+      const bytes = Buffer.from(await assetResp.arrayBuffer());
+      res.set("Content-Type", contentType);
+      res.set("Content-Disposition", "inline");
+      res.set("Cache-Control", "public, max-age=3600");
+      res.send(bytes);
     } catch (err) {
       console.error("[StorageProxy] failed:", err);
       res.status(502).send("Storage proxy error");
